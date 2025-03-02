@@ -1,0 +1,110 @@
+%this was the trail code for the work of the showing the data from the pins in the 7 segment display
+%all the eaplaination are the commented
+
+#include "MKL25Z4.h"
+%call for the module for the device in use 
+
+void delay1(int32_t i){
+	int j=0;
+	while ( j==i){
+		 j++;
+	}
+}
+%delay function 
+
+%this function is a generalysed as from here we can calibrate accorfing to the pins we are going to use for the same
+void show_num(int a){
+	if (a==0){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+
+	}
+	else if (a==1){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==2){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==3){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==4){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}	
+	else if (a==5){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==6){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==7){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==8){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+	else if (a==9){
+		GPIOA_PDOR=0xffffffff;
+		GPIOD_PDOR=0xffffffff;
+		GPIOC_PDOR=0xffffffff;
+	}
+}
+
+
+int main(){
+
+	SIM_SCGC5 = 0x0FFFFFFF;
+	PORTA_PCR1 |= 0X100;
+	PORTA_PCR2 |= 0X100;
+	PORTD_PCR4 |= 0X100;
+	PORTA_PCR12 |= 0X100;
+	PORTA_PCR4 |= 0X100;
+	PORTA_PCR5 |= 0X100;
+	PORTC_PCR8 |= 0X100;
+	PORTC_PCR9 |= 0X100;
+	GPIOA_PDOR = 0x000000ff;
+	GPIOD_PDOR = 0x000000ff;
+	GPIOC_PDOR = 0x000000ff;
+		while(1)
+	{
+		show_num(0);
+		delay1(2000000);
+		show_num(1);
+		delay1(2000000);
+		show_num(2);
+		delay1(2000000);
+		show_num(3);
+		delay1(2000000);
+		show_num(4);
+		delay1(2000000);
+		show_num(5);
+		delay1(2000000);
+		show_num(6);
+		delay1(2000000);
+		show_num(7);
+		delay1(2000000);
+		show_num(8);
+		delay1(2000000);
+		show_num(9);
+		delay1(2000000);
+	}
+}
+%again this is a very generalysed approact toward the 7 segmant display problem 
+
