@@ -1,0 +1,91 @@
+%this is for the work of as we use a potentiometer and use it to show the data from that to the 7 segment diaplay using the ADC from the Microprocessor
+%here only the C-ports are used in this caseand the values are scalesd accordingly to the 7 segment display
+
+#include "MKL25Z4.h"
+
+void delay1(int32_t i) {
+    int32_t j = 0;
+    for (j = 0; j < i; j++) {
+        __NOP();
+    }
+}
+
+void show_num(int a){
+	if (a==0){
+				GPIOC_PDOR=0xffffff40;
+
+
+	}
+	else if (a==1){
+				GPIOC_PDOR=0xfffffff9;
+
+	}
+	else if (a==2){
+				GPIOC_PDOR=0xffffffa4;
+
+
+	}
+	else if (a==3){
+				GPIOC_PDOR=0xffffffb0;
+
+	}
+	else if (a==4){
+				GPIOC_PDOR=0xffffff99;
+
+	}	
+	else if (a==5){
+						GPIOC_PDOR=0xffffff92;
+
+	}
+	else if (a==6){
+				GPIOC_PDOR=0xffffff82;
+
+	}
+	else if (a==7){
+				GPIOC_PDOR=0xfffffff8;
+
+	}
+	else if (a==8){
+		GPIOC_PDOR=0xffffff80;
+
+	}
+	else if (a==9){
+		GPIOC_PDOR=0xffffff90;
+	}
+}
+
+void ADC_Init(void) {
+    SIM_SCGC6 |= (1 << 27);
+    ADC0_CFG1 = (0x2 << 2) | (0x1 << 5); // 12-bit mode, ADIV = divide by 4
+    ADC0_SC1A = 0x08;
+}
+
+uint16_t ADC_Read(void) {
+    ADC0_SC1A = 0x08;
+    while (!(ADC0_SC1A & 0x80));
+    return ADC0_RA;
+}
+
+int main(void) {
+    SIM_SCGC5 = 0xffffffff;
+		ADC0_CFG1 = (0x2 << 2) | (0x1 << 5);
+		ADC0_SC1A = 0x08;
+    PORTC_PCR7 = 0x00000100;
+    PORTC_PCR6 = 0x00000100;
+    PORTC_PCR5 = 0x00000100;
+    PORTC_PCR4 = 0x00000100;
+    PORTC_PCR3 = 0x00000100;
+    PORTC_PCR2 = 0x00000100;
+    PORTC_PCR1 = 0x00000100;
+    PORTC_PCR0 = 0x00000100;
+    GPIOC_PDDR = 0x000000FF; 
+    while (1) {
+        uint16_t a = ADC_Read();
+
+        int display_value = (a * 50) / 4096;
+
+        show_num(display_value);
+
+        delay1(100000);
+    }
+}
