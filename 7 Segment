@@ -1,0 +1,118 @@
+
+
+
+#include "MKL25Z4.h"
+
+void delay1(int32_t i) {
+    int32_t j = 0;
+    for (j = 0; j < i; j++) {
+        __NOP();
+    }
+}
+
+void show_num(int a){
+	if (a==0){
+				GPIOC_PDOR=0xffffff40;
+
+
+	}
+	else if (a==1){
+				GPIOC_PDOR=0xfffffff9;
+
+	}
+	else if (a==2){
+				GPIOC_PDOR=0xffffffa4;
+
+
+	}
+	else if (a==3){
+				GPIOC_PDOR=0xffffffb0;
+
+	}
+	else if (a==4){
+				GPIOC_PDOR=0xffffff99;
+
+	}	
+	else if (a==5){
+						GPIOC_PDOR=0xffffff92;
+
+	}
+	else if (a==6){
+				GPIOC_PDOR=0xffffff82;
+
+	}
+	else if (a==7){
+				GPIOC_PDOR=0xfffffff8;
+
+	}
+	else if (a==8){
+		GPIOC_PDOR=0xffffff80;
+
+	}
+	else if (a==9){
+		GPIOC_PDOR=0xffffff90;
+	}
+}
+
+int16_t Read() {
+    ADC0_SC1A = 0x08;
+    while (!(ADC0_SC1A & 0x80));
+    return ADC0_RA;
+}
+
+int main(void) {
+    SIM_SCGC5 = 0x00000800;
+		SIM_SCGC6 = 0x08000000;
+    ADC0_CFG1 = 0x00000024;  
+    ADC0_SC1A = 0x00000008; 
+    PORTC_PCR7 = 0x00000100;
+    PORTC_PCR6 = 0x00000100;
+    PORTC_PCR5 = 0x00000100;
+    PORTC_PCR4 = 0x00000100;
+    PORTC_PCR3 = 0x00000100;
+    PORTC_PCR2 = 0x00000100;
+    PORTC_PCR1 = 0x00000100;
+    PORTC_PCR0 = 0x00000100;
+    GPIOC_PDDR = 0x000000FF; 
+		int16_t a;
+    while (1) {
+				
+        a = Read();
+        int d = (a) / (4096/40);
+        show_num(d);
+        delay1(100000);
+    }
+}
+
+
+#include "MKL25Z4.h"
+
+void delay1(int32_t i)
+{
+    int32_t j=0;
+    for(j=0;j<i;j++)
+    {
+        __NOP();
+    }
+}
+int main(){
+int i=0, a=0, j=1000, k=0;
+	SIM_SOPT5 = 0x0;
+	SIM_SOPT2 = 0x04000000;
+	SIM_SCGC5 = 0x0600;
+	SIM_SCGC4 = 0x0400;
+	PORTA_PCR2 = 0x200;
+	PORTA_PCR1 = 0x200;
+	UART0_BDH =0x0;
+	UART0_BDL =0x89;
+	UART0_C2 =0x0C;
+	
+  while (1){
+		UART0_D = i;
+		i++;
+		while(!(UART0_S1 & 0x80)){
+		}
+	}
+	
+	
+}
