@@ -1,0 +1,9 @@
+import serial
+
+ser = serial.Serial('COM3', 19200, timeout=1)  # Adjust 'COM3' as needed
+
+while True:
+    data = ser.read(2)  # Read 2 bytes
+    if len(data) == 2:
+        adc_value = (data[0] << 8) | data[1]  # Combine high and low bytes
+        print(f"ADC Value: {adc_value}")
