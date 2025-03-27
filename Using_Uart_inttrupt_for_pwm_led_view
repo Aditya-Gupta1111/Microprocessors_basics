@@ -1,0 +1,45 @@
+#include "MKL25Z4.h"
+
+void delay_ms(unsigned int ms) {
+    for (unsigned int i = 0; i < ms * 4000; i++) {
+        __NOP(); 
+    }
+}
+
+void UART0_IRQHandler(void) {
+    if (UART0_S1 & 0x20) {  
+        char receivedChar = UART0_D;
+        if (receivedChar == 'T') {  
+            GPIOB_PSOR = (1 << 18); // Turn ON LED
+            delay_ms(2000); // Wait for 2 seconds
+            GPIOB_PCOR = (1 << 18); // Turn OFF LED
+        }
+    }
+}
+
+void UART0_Init(void) {
+    SIM_SOPT2 |= 0x04000000; 
+    SIM_SCGC5 |= 0x0600;     
+    SIM_SCGC4 |= 0x0400;     
+
+    PORTA_PCR1 = 0x200; 
+    PORTA_PCR2 = 0x200; 
+
+    UART0_BDH = 0x00;
+    UART0_BDL = 0x89; 
+    UART0_C2 |= 0x24; 
+
+    NVIC_EnableIRQ(UART0_IRQn); 
+}
+
+int main() {
+    SIM_SCGC5 |= 0x0400; 
+    PORTB_PCR18 = 0x100;  
+    GPIOB_PDDR |= (1 << 18);  
+
+    UART0_Init(); 
+
+    while (1) {
+        __WFI();
+    }
+}
