@@ -1,0 +1,55 @@
+#include "MKL25Z4.h"
+
+volatile uint16_t adc_value = 0;
+
+void ADC0_IRQHandler(void) {
+    adc_value = ADC0_RA; 
+    while (!(UART0_S1 & 0x80));
+    UART0_D = (adc_value >> 8) & 0xFF; 
+    while (!(UART0_S1 & 0x80));
+    UART0_D = adc_value & 0xFF;
+}
+
+void ADC0_Init(void) {
+    SIM_SCGC6 |= 0x8000000;
+    ADC0_SC2 &= ~0x40; 
+    ADC0_SC3 |= 0x07; 
+    ADC0_SC1A = 0x00; 
+    NVIC_EnableIRQ(ADC0_IRQn);
+}
+
+void UART0_Init(void) {
+    SIM_SOPT2 |= 0x04000000; 
+    SIM_SCGC4 |= 0x0400; 
+    SIM_SCGC5 |= 0x0200; 
+
+    PORTA_PCR1 = 0x200; 
+    PORTA_PCR2 = 0x200;
+
+    UART0_BDH = 0x00;
+    UART0_BDL = 0x0A; 
+    UART0_C2 |= 0x08; 
+}
+
+void PIT_IRQHandler(void) {
+    ADC0_SC1A = 0x00;
+    PIT_TFLG0 = 1; 
+}
+
+void PIT_Init(void) {
+    SIM_SCGC6 |= 0x01000000; 
+    PIT_MCR = 0x00; 
+    PIT_LDVAL0 = 960000;
+    PIT_TCTRL0 = 0x03; 
+    NVIC_EnableIRQ(PIT_IRQn);
+}
+
+int main(void) {
+    UART0_Init();
+    ADC0_Init();
+    PIT_Init();
+
+    while (1) {
+        __WFI(); 
+    }
+}
