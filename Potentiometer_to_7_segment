@@ -1,0 +1,35 @@
+#include "MKL25Z4.h"
+
+void delay1(int32_t i) {
+    int32_t j = 0;
+    for (j = 0; j < i; j++) {
+        __NOP();
+    }
+}
+void ADC_Init(void) {
+    SIM_SCGC6 |= (1 << 27);
+    ADC0_CFG1 = (0x2 << 2) | (0x1 << 5); // 12-bit mode, ADIV = divide by 4
+    ADC0_SC1A = 0x08;
+}
+
+uint16_t ADC_Read(void) {
+    ADC0_SC1A = 0x08;
+    while (!(ADC0_SC1A & 0x80));
+    return ADC0_RA;
+}
+
+int main(void) {
+    SIM_SCGC5 = 0xffffffff;
+		ADC0_CFG1 = (0x2 << 2) | (0x1 << 5);
+		ADC0_SC1A = 0x08;
+    GPIOC_PDDR = 0x000000FF; 
+    while (1) {
+        uint16_t a = ADC_Read();
+
+        int display_value = (a * 50) / 4096;
+
+        show_num(display_value);
+
+        delay1(100000);
+    }
+}
