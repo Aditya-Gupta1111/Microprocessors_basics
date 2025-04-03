@@ -1,0 +1,49 @@
+// UART TX without interrupt
+
+#include "MKL25Z4.h"
+
+void static delay_nop( int cycles )
+{
+	for (int i=0; i < cycles; i = i+1)
+	{
+		__NOP();
+	}
+}
+
+char msg[] = "Hello world\r\n";
+int ind = 0;
+
+int main(void)
+{
+	
+	// PTB8 - A, PTB9 - B, PTB10 - C, PTB11 - D, PTE2 - E, PTE3 - F, PTE4 - G, PTE5 - , 
+	
+	// UART init
+	// UART0 RX - PTA1, UART0 TX - PTA2
+	
+	SIM_SCGC5  = 0x0200;				// Enable clock for PORT A
+	SIM_SOPT2 |= 0x04000000;		// Select MCGFLLCLK clock source for UART 0
+	SIM_SCGC4 |= 0x0400;				// Enable CG for UART0 
+	
+	UART0_BDL  = 0x89;
+	UART0_BDH  = 0x00;
+	
+	// PCR setting for polling method
+	PORTA_PCR1 = 0x0200;				// Set MUX functionality of PTA1 to ALT2 (UART)
+	PORTA_PCR2 = 0x0200;				// Set MUX functionality of PTA2 to ALT2 (UART)
+	
+	//uint8_t hex_msg[] = {0x48, 0x65, 0x6C, 0x6C, 0x6F, 0xD};
+	//uint8_t hex_msg[6] = {0x30, 0x31, 0x32, 0x33, 0x34, 0x35};
+	
+	UART0_C2 = 0xC;							// Tx enable
+	
+	while(1)
+	{
+		for( int i = 0 ; i < sizeof(msg)-1; i = i+1)
+		{
+			while(!(UART0_S1 & 0x80));
+				UART0_D = msg[i];
+		}
+	}
+
+}
