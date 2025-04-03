@@ -1,0 +1,50 @@
+//the code provided by the proffesor 
+#include "MKL25Z4.h"
+
+char msg[] = "Hello world\r\n";
+int ind = 0;
+
+int main(void)
+{
+	
+	SIM_SCGC5  = 0x0200;				// Enable clock for PORT A
+	SIM_SOPT2 |= 0x04000000;		// Select MCGFLLCLK clock source for UART 0
+	SIM_SCGC4 |= 0x0400;				// Enable CG for UART0 
+	
+	UART0_BDL  = 0x89;					// Set baud rate as 9600, OSR = 15, 
+	UART0_BDH  = 0x00;
+	
+	// PCR setting for interrupt method
+	PORTA_PCR1 = 0x00000200;				// Set MUX functionality of PTA1 to ALT2 (UART_RX)
+	PORTA_PCR2 = 0x00090200;				// Set MUX functionality of PTA2 to ALT2 (UART_TX), configure interrupt on rising edge
+	
+	NVIC_EnableIRQ(0xC);					// Enable IRQ 12 (UART) in NVIC
+	
+	UART0_C2 = 0x88;							// Tx enable, TIE bit set (Interrpt when TDRE is 1)
+	
+	for(;;)
+	{
+		
+	}
+}
+
+
+void UART0_IRQHandler(void)
+{
+	// Write TX data
+	UART0_D = msg[ind];
+	
+	if( ind < sizeof(msg) - 1)
+	{
+		ind++;
+	}
+	else
+	{
+		ind = 0;
+	}
+	
+	// Clear interrupt flag
+	PORTA_ISFR = 0xFFFF;
+}
+
+
